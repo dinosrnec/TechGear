@@ -1,0 +1,85 @@
+@model WebShop.Models.Proizvod
+
+@{
+    ViewData["Title"] = "Uredi artikl";
+}
+
+<style>
+    .form-wrap { max-width: 580px; margin: 0 auto; }
+    .form-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .form-card h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.3px; color: #0f172a; margin-bottom: 0.25rem; }
+    .form-card .sub { font-size: 0.88rem; color: #64748b; margin-bottom: 2rem; }
+    .form-label { font-size: 0.82rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem; }
+    .form-control, .form-select { border-color: #e2e8f0; border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 0.92rem; }
+    .form-control:focus, .form-select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    textarea.form-control { resize: vertical; }
+</style>
+
+<div class="mb-3">
+    <a asp-action="Index" class="text-secondary text-decoration-none small fw-semibold">← Natrag na katalog</a>
+</div>
+
+<div class="form-wrap">
+    <div class="form-card shadow-sm">
+        <h2>Uredi Artikl</h2>
+        <p class="sub">Izmijeni detalje o proizvodu</p>
+
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3 py-2 small mb-3 text-danger"></div>
+
+            <input type="hidden" asp-for="ProizvodID" />
+
+            <div class="mb-3">
+                <label class="form-label">Naziv proizvoda</label>
+                <input asp-for="Naziv" class="form-control" required />
+                <span asp-validation-for="Naziv" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Kategorija</label>
+                <select asp-for="Kategorija" class="form-select" required>
+                    <option>Miševi</option>
+                    <option>Tipkovnice</option>
+                    <option>Monitori</option>
+                    <option>SSD</option>
+                    <option>Grafičke</option>
+                    <option>Procesori</option>
+                    <option>Kućišta</option>
+                    <option>Slušalice</option>
+                    <option>Kontroleri</option>
+                </select>
+                <span asp-validation-for="Kategorija" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label class="form-label">Cijena (€)</label>
+                    <input asp-for="Cijena" type="number" step="0.01" class="form-control" required />
+                    <span asp-validation-for="Cijena" class="text-danger small"></span>
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Količina (Lager)</label>
+                    <input asp-for="Lager" type="number" class="form-control" required />
+                    <span asp-validation-for="Lager" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">URL slike</label>
+                <input asp-for="SlikaUrl" class="form-control" />
+                <span asp-validation-for="SlikaUrl" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Opis proizvoda</label>
+                <textarea asp-for="Opis" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Opis" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex gap-3">
+                <a asp-action="Index" class="btn btn-outline-secondary rounded-3 w-50 py-2 fw-semibold">Odustani</a>
+                <button type="submit" class="btn btn-primary rounded-3 w-50 py-2 fw-bold shadow-sm">Spremi izmjene</button>
+            </div>
+        </form>
+    </div>
+</div>

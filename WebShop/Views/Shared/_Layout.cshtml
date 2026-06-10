@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TechGear</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        :root {
+            --tg-dark:    #0f172a;
+            --tg-navy:    #1e293b;
+            --tg-blue:    #3b82f6;
+            --tg-cyan:    #06b6d4;
+            --tg-surface: #f8fafc;
+            --tg-border:  #e2e8f0;
+        }
+
+        html { height: 100%; }
+        body {
+            background-color: var(--tg-surface);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #1e293b;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        body > .container { flex: 1; }
+
+        /* ── Navbar ── */
+        .tg-nav {
+            background: var(--tg-dark);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            padding: 0.85rem 0;
+        }
+        .tg-nav .navbar-brand {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+        .tg-nav .navbar-brand span { color: var(--tg-blue); }
+        .tg-nav .nav-link {
+            color: rgba(255,255,255,0.75) !important;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 1.1rem !important;
+            border-radius: 8px;
+            transition: color 0.15s, background 0.15s;
+        }
+        .tg-nav .nav-link:hover { color: #fff !important; background: rgba(255,255,255,0.09); }
+        .tg-nav .nav-link.active { color: #fff !important; }
+
+        /* Wishlist — rose/pink solid */
+        .tg-nav .btn-nav-wish {
+            display: inline-block;
+            background: #be185d;
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            padding: 0.52rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.15s, transform 0.1s;
+            white-space: nowrap;
+        }
+        .tg-nav .btn-nav-wish:hover { background: #9d174d; color: #fff; transform: translateY(-1px); }
+
+        /* Cart — vivid blue */
+        .tg-nav .btn-nav-primary {
+            display: inline-block;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            padding: 0.52rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.15s, transform 0.1s;
+            white-space: nowrap;
+        }
+        .tg-nav .btn-nav-primary:hover { background: #1d4ed8; color: #fff; transform: translateY(-1px); }
+
+        /* Logout — solid red */
+        .tg-nav .btn-nav-danger {
+            display: inline-block;
+            background: #dc2626;
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            padding: 0.52rem 1.1rem;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .tg-nav .btn-nav-danger:hover { background: #b91c1c; color: #fff; transform: translateY(-1px); }
+
+        .tg-nav .user-chip {
+            background: rgba(59,130,246,0.18);
+            border: 1px solid rgba(59,130,246,0.35);
+            border-radius: 20px;
+            padding: 0.38rem 1rem;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .tg-nav .role-badge {
+            background: rgba(59,130,246,0.35);
+            color: #bfdbfe;
+            border-radius: 20px;
+            padding: 2px 9px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        /* ── Nav counters ── */
+        .nav-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            line-height: 1;
+            padding: 0 5px;
+            margin-left: 5px;
+            vertical-align: middle;
+            transition: transform 0.15s;
+        }
+        .nav-count.hidden { display: none; }
+        .nav-count-wish { background: #fff; color: #be185d; }
+        .nav-count-cart { background: #fff; color: #1d4ed8; }
+
+        /* ── Alerts ── */
+        .tg-alert {
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* ── Footer ── */
+        .tg-footer {
+            background: var(--tg-dark);
+            color: rgba(255,255,255,0.45);
+            padding: 2rem 0;
+            margin-top: 5rem;
+            font-size: 0.85rem;
+        }
+        .tg-footer .brand { color: rgba(255,255,255,0.85); font-weight: 700; }
+        .tg-footer a { color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.15s; }
+        .tg-footer a:hover { color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm tg-nav">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    ⚡ <span>Tech</span>Gear
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Proizvodi" asp-action="Index">Katalog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Recenzija" asp-action="Index">Recenzije</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="ONama" asp-action="Index">O nama</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Kontakt" asp-action="Index">Kontakt</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav align-items-center gap-2">
+                        @using Microsoft.AspNetCore.Http
+
+                        @if (!string.IsNullOrEmpty(Context.Session.GetString("KorisnikIme")))
+                        {
+                            <li class="nav-item">
+                                <div class="user-chip">
+                                    <span>@Context.Session.GetString("KorisnikIme")</span>
+                                    <span class="role-badge">@Context.Session.GetString("KorisnikUloga")</span>
+                                </div>
+                            </li>
+                            @if (Context.Session.GetString("KorisnikUloga") != "Admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="btn-nav-wish" asp-controller="Wishlist" asp-action="Index">
+                                        Lista želja ♡<span id="nav-wish-count" class="nav-count nav-count-wish hidden"></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn-nav-primary" asp-controller="Kosarica" asp-action="Index">
+                                        Košarica 🛒<span id="nav-cart-count" class="nav-count nav-count-cart hidden"></span>
+                                    </a>
+                                </li>
+                            }
+                            <li class="nav-item ms-1">
+                                <a class="btn-nav-danger" asp-controller="Racun" asp-action="Odjava">Odjava</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Racun" asp-action="Login">Prijava</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn-nav-primary" asp-controller="Racun" asp-action="Registracija">Registracija</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container" style="padding-top: 2rem;">
+        <main role="main" class="pb-5">
+            @if (TempData["Poruka"] != null)
+            {
+                <div class="alert alert-success tg-alert alert-dismissible fade show mb-4" role="alert">
+                    @TempData["Poruka"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Greska"] != null)
+            {
+                <div class="alert alert-danger tg-alert alert-dismissible fade show mb-4" role="alert">
+                    @TempData["Greska"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- CTA strip — shown on every page -->
+    <div style="background:linear-gradient(135deg,#0f172a,#1e3a5f); padding:3rem 0; margin-top:4rem;">
+        <div class="container text-center">
+            <h3 class="fw-bold text-white mb-2" style="letter-spacing:-0.3px;">Spremi se za sljedeći level</h3>
+            <p class="mb-4" style="color:rgba(255,255,255,0.55); font-size:0.95rem;">Pregledaj naš katalog i pronađi opremu koja odgovara tvojim potrebama.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a asp-controller="Proizvodi" asp-action="Index" class="btn btn-primary rounded-3 px-5 py-2 fw-bold shadow-sm">Istraži katalog →</a>
+                <a asp-controller="Kontakt" asp-action="Index" class="btn btn-outline-light rounded-3 px-4 py-2 fw-semibold">Kontaktirajte nas</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="tg-footer">
+        <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+            <span>© 2026 <span class="brand">TechGear d.o.o.</span> — Sva prava pridržana.</span>
+            <div class="d-flex gap-3 flex-wrap">
+                <a asp-controller="Proizvodi" asp-action="Index">Katalog</a>
+                <a asp-controller="Recenzija" asp-action="Index">Recenzije</a>
+                <a asp-controller="ONama" asp-action="Index">O nama</a>
+                <a asp-controller="Kontakt" asp-action="Index">Kontakt</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Wishlist-in-cart warning modal -->
+    <div class="modal fade" id="wishlistModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+            <div class="modal-content border-0 rounded-4 shadow-lg p-2">
+                <div class="modal-body text-center py-4 px-4">
+                    <div style="font-size:2.8rem; margin-bottom:0.75rem;">❤️🛒</div>
+                    <h5 class="fw-bold mb-2" style="color:#0f172a;">Artikl je na listi želja</h5>
+                    <p class="text-muted mb-0" style="font-size:0.92rem;">
+                        Ovaj proizvod je već na vašoj <strong>listi želja</strong>.<br>
+                        Svejedno ga dodajte u košaricu?
+                    </p>
+                </div>
+                <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4 fw-semibold"
+                            data-bs-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-primary rounded-3 px-4 fw-bold" id="modalConfirmBtn">
+                        Dodaj svejedno
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    @if (!string.IsNullOrEmpty(Context.Session.GetString("KorisnikIme")) &&
+         Context.Session.GetString("KorisnikUloga") != "Admin")
+    {
+        <script>
+            function updateBadge(spanId, url) {
+                fetch(url)
+                    .then(r => r.json())
+                    .then(data => {
+                        const el = document.getElementById(spanId);
+                        if (!el) return;
+                        if (data.count > 0) {
+                            el.textContent = data.count;
+                            el.classList.remove('hidden');
+                            el.style.transform = 'scale(1.2)';
+                            setTimeout(() => el.style.transform = '', 200);
+                        } else {
+                            el.classList.add('hidden');
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            function refreshCounts() {
+                updateBadge('nav-cart-count', '/Kosarica/BrojStavki');
+                updateBadge('nav-wish-count', '/Wishlist/BrojStavki');
+            }
+
+            refreshCounts();
+            setInterval(refreshCounts, 5000);
+
+            // ── Wishlist popup on add-to-cart ──
+            let wishlistIds = [];
+            fetch('/Wishlist/MojeId')
+                .then(r => r.json())
+                .then(ids => { wishlistIds = ids; })
+                .catch(() => {});
+
+            let pendingForm = null;
+            const wishModal     = new bootstrap.Modal(document.getElementById('wishlistModal'));
+            const confirmBtn    = document.getElementById('modalConfirmBtn');
+
+            document.addEventListener('submit', function (e) {
+                const form = e.target;
+                if (!form.classList.contains('kosarica-form')) return;
+                const pid = parseInt(form.dataset.productId, 10);
+                if (wishlistIds.includes(pid)) {
+                    e.preventDefault();
+                    pendingForm = form;
+                    wishModal.show();
+                }
+            });
+
+            confirmBtn.addEventListener('click', function () {
+                wishModal.hide();
+                if (pendingForm) {
+                    pendingForm.dataset.productId = '';   // clear so re-submit won't retrigger
+                    pendingForm.submit();
+                    pendingForm = null;
+                }
+            });
+        </script>
+    }
+</body>
+</html>

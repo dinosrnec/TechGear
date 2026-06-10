@@ -1,0 +1,180 @@
+@{
+    ViewData["Title"] = "Početna";
+}
+
+<style>
+    .hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+        border-radius: 20px;
+        padding: 5rem 3rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 4rem;
+    }
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(59,130,246,0.18) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .hero-eyebrow {
+        display: inline-block;
+        background: rgba(59,130,246,0.2);
+        border: 1px solid rgba(59,130,246,0.4);
+        color: #93c5fd;
+        border-radius: 20px;
+        padding: 0.3rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 1.25rem;
+    }
+    .hero-title {
+        font-size: clamp(2.4rem, 5vw, 3.8rem);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+        margin-bottom: 1.25rem;
+    }
+    .hero-gradient {
+        background: linear-gradient(90deg, #60a5fa, #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .hero-sub {
+        color: rgba(255,255,255,0.55);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        max-width: 480px;
+        margin-bottom: 2rem;
+    }
+    .hero-emoji {
+        font-size: 9rem;
+        opacity: 0.12;
+        line-height: 1;
+        user-select: none;
+    }
+
+    .feature-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.75rem;
+        height: 100%;
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+        box-shadow: 0 12px 28px rgba(0,0,0,0.07);
+        transform: translateY(-4px);
+    }
+    .feature-icon {
+        width: 52px;
+        height: 52px;
+        background: #eff6ff;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.1rem;
+    }
+    .feature-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: #0f172a; }
+    .feature-text  { font-size: 0.88rem; color: #64748b; line-height: 1.6; margin: 0; }
+
+    .stat-band {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        margin-bottom: 4rem;
+    }
+    .stat-num { font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1; }
+    .stat-lbl { font-size: 0.82rem; color: #64748b; margin-top: 0.25rem; }
+    .divider-v { width: 1px; background: #e2e8f0; align-self: stretch; margin: 0 1rem; }
+</style>
+
+<!-- Hero -->
+<div class="hero shadow-lg">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <div class="hero-eyebrow">Premium hardver &amp; periferija</div>
+            <h1 class="hero-title">
+                Opremi se<br>
+                <span class="hero-gradient">TechGear</span> opremom
+            </h1>
+            <p class="hero-sub">
+                Tvoje glavno odredište za vrhunske komponente, periferiju i opremu koja podiže tvoj setup na višu razinu.
+            </p>
+            <div class="d-flex flex-column flex-sm-row gap-3">
+                <a asp-controller="Proizvodi" asp-action="Index"
+                   class="btn btn-primary btn-lg rounded-3 px-5 py-3 fw-bold shadow-sm">
+                    Istraži katalog →
+                </a>
+                <a asp-controller="Racun" asp-action="Registracija"
+                   class="btn btn-outline-light btn-lg rounded-3 px-4 py-3 fw-semibold">
+                    Stvori račun
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5 text-center d-none d-lg-flex justify-content-center align-items-center">
+            <div class="hero-emoji">💻</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats strip -->
+<div class="stat-band">
+    <div class="row text-center g-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-num">20+</div>
+            <div class="stat-lbl">Proizvoda u katalogu</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-num">24h</div>
+            <div class="stat-lbl">Dostava</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-num">2 god.</div>
+            <div class="stat-lbl">Jamstvo</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-num">9+</div>
+            <div class="stat-lbl">Kategorija</div>
+        </div>
+    </div>
+</div>
+
+<!-- Feature cards -->
+<div class="mb-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold" style="letter-spacing:-0.5px;">Zašto odabrati TechGear?</h2>
+        <p class="text-muted" style="font-size:0.95rem;">Pružamo standard kakav tvoj hardver zaslužuje.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">🚚</div>
+                <div class="feature-title">Ekspresna dostava</div>
+                <p class="feature-text">Sve narudžbe šaljemo unutar 24 sata — sigurno zapakirano i osigurano.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">Jamstvo kvalitete</div>
+                <p class="feature-text">Svi proizvodi dolaze s tvorničkim jamstvom od 2 godine i osiguranom podrškom.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">🛠️</div>
+                <div class="feature-title">Korisnička podrška</div>
+                <p class="feature-text">Naš tim tech stručnjaka dostupan je za sva pitanja oko kompatibilnosti komponenti.</p>
+            </div>
+        </div>
+    </div>
+</div>

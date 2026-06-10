@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Prijava";
+}
+
+<style>
+    .auth-wrap {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .auth-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 2.75rem 2.5rem;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    }
+    .auth-logo { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; }
+    .auth-logo span { color: #3b82f6; }
+    .auth-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; letter-spacing: -0.3px; }
+    .auth-sub { font-size: 0.88rem; color: #64748b; margin-bottom: 2rem; }
+    .form-label { font-size: 0.82rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem; }
+    .form-control { border-color: #e2e8f0; border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 0.92rem; }
+    .form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .btn-submit { border-radius: 10px; padding: 0.65rem; font-weight: 700; font-size: 0.95rem; }
+    .auth-footer { font-size: 0.85rem; color: #64748b; margin-top: 1.5rem; text-align: center; }
+    .auth-footer a { color: #3b82f6; font-weight: 600; text-decoration: none; }
+    .auth-footer a:hover { text-decoration: underline; }
+</style>
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">⚡ <span>Tech</span>Gear</div>
+        <h2 class="auth-title">Dobrodošli natrag</h2>
+        <p class="auth-sub">Prijavite se u svoj korisnički račun</p>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger border-0 rounded-3 py-2 small mb-4">
+                <div asp-validation-summary="All" class="text-danger mb-0"></div>
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            <div class="mb-3">
+                <label class="form-label">Email adresa</label>
+                <input type="email" name="email" class="form-control" placeholder="ime@primjer.com" required />
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Lozinka</label>
+                <div class="input-group">
+                    <input type="password" name="lozinka" id="lozinkaInput" class="form-control" placeholder="••••••••" required />
+                    <button type="button" class="btn btn-outline-secondary px-3" id="toggleLozinka"
+                            style="border-color:#e2e8f0; border-radius:0 10px 10px 0;" title="Prikaži / sakrij lozinku">
+                        <span id="eyeIcon">👁</span>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-submit w-100">Prijavi se</button>
+        </form>
+
+        <div class="auth-footer">
+            Novi ste ovdje? <a asp-action="Registracija">Kreirajte račun</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const btn   = document.getElementById('toggleLozinka');
+        const input = document.getElementById('lozinkaInput');
+        const icon  = document.getElementById('eyeIcon');
+        let visible = false;
+        btn.addEventListener('click', function () {
+            visible = !visible;
+            input.type = visible ? 'text' : 'password';
+            icon.textContent = visible ? '🙈' : '👁';
+        });
+    })();
+</script>

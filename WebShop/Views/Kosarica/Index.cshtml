@@ -1,0 +1,136 @@
+@model IEnumerable<WebShop.Models.Proizvod>
+
+@{
+    ViewData["Title"] = "Košarica";
+    decimal ukupno = Model.Sum(p => p.Cijena);
+}
+
+<style>
+    .cart-wrap { max-width: 860px; margin: 0 auto; }
+    .cart-table-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .cart-table thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1rem 1.25rem;
+    }
+    .cart-table tbody td { padding: 1rem 1.25rem; vertical-align: middle; border-bottom: 1px solid #f1f5f9; }
+    .cart-table tbody tr:last-child td { border-bottom: none; }
+    .item-name { font-weight: 700; color: #0f172a; font-size: 0.95rem; }
+    .item-cat  { display: inline-block; background: #f1f5f9; color: #64748b; border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; font-weight: 600; margin-top: 3px; }
+    .item-price { font-weight: 800; color: #0f172a; font-size: 1rem; }
+
+    .cart-summary {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .total-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; }
+    .total-amount { font-size: 2rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; line-height: 1; }
+
+    .empty-state {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        text-align: center;
+        max-width: 480px;
+        margin: 3rem auto;
+    }
+</style>
+
+<div class="cart-wrap">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <h2 class="fw-bold mb-0" style="letter-spacing:-0.5px;">Košarica</h2>
+        @if (Model.Any())
+        {
+            <span class="badge bg-primary rounded-pill">@Model.Count() artikla</span>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="fs-1 mb-3 text-muted">🛒</div>
+            <h5 class="fw-bold text-dark mb-2">Košarica je prazna</h5>
+            <p class="text-muted small mb-4">Pregledaj naš katalog i opremi se najboljim tech dodacima.</p>
+            <a asp-controller="Proizvodi" asp-action="Index" class="btn btn-primary rounded-3 px-5 py-2 fw-semibold">Istraži katalog</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-table-card shadow-sm">
+            <table class="table cart-table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:80px;">Slika</th>
+                        <th>Artikl</th>
+                        <th>Kategorija</th>
+                        <th class="text-end">Cijena</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.SlikaUrl))
+                                {
+                                    <img src="@item.SlikaUrl" alt="@item.Naziv"
+                                         class="rounded-3" style="width:52px;height:52px;object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <img src="https://placehold.co/52x52/f1f5f9/94a3b8?text=?" class="rounded-3" />
+                                }
+                            </td>
+                            <td>
+                                <div class="item-name">@item.Naziv</div>
+                            </td>
+                            <td>
+                                <span class="item-cat">@item.Kategorija</span>
+                            </td>
+                            <td class="text-end">
+                                <span class="item-price">@item.Cijena.ToString("F2") €</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cart-summary shadow-sm">
+            <div>
+                <div class="total-label">Ukupno za plaćanje</div>
+                <div class="total-amount">@ukupno.ToString("F2") €</div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <form asp-action="Ocisti" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-secondary rounded-3 px-4 py-2 fw-semibold">
+                        Isprazni košaricu
+                    </button>
+                </form>
+                <a asp-action="GenerirajPdf" class="btn btn-dark rounded-3 px-4 py-2 fw-semibold shadow-sm">
+                    📄 Preuzmi ponudu (PDF)
+                </a>
+            </div>
+        </div>
+    }
+</div>

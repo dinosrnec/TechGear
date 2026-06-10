@@ -1,0 +1,128 @@
+@model WebShop.Models.Proizvod
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = Model.Naziv;
+    string? uloga = Context.Session.GetString("KorisnikUloga");
+}
+
+<style>
+    .details-wrap {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 2.5rem;
+    }
+    .img-panel {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 360px;
+    }
+    .cat-pill {
+        background: #eff6ff;
+        color: #3b82f6;
+        border-radius: 20px;
+        padding: 4px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .stock-ok   { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; border-radius: 20px; padding: 4px 14px; font-size: 0.82rem; font-weight: 700; }
+    .stock-none { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 20px; padding: 4px 14px; font-size: 0.82rem; font-weight: 700; }
+    .detail-price { font-size: 2.4rem; font-weight: 800; color: #0f172a; letter-spacing: -1px; line-height: 1; }
+    .section-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #94a3b8; margin-bottom: 0.5rem; }
+    .desc-text { color: #475569; line-height: 1.75; font-size: 0.95rem; }
+    .admin-panel { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; }
+</style>
+
+<div class="mb-3">
+    <a asp-action="Index" class="text-secondary text-decoration-none small fw-semibold">← Natrag na katalog</a>
+</div>
+
+<div class="details-wrap shadow-sm">
+    <div class="row g-5">
+        <div class="col-md-5">
+            <div class="img-panel">
+                @if (!string.IsNullOrEmpty(Model.SlikaUrl))
+                {
+                    <img src="@Model.SlikaUrl" class="img-fluid" alt="@Model.Naziv" style="max-height: 340px; object-fit: contain;">
+                }
+                else
+                {
+                    <img src="https://placehold.co/400x340/f1f5f9/94a3b8?text=Nema+Slike" class="img-fluid rounded" alt="Nema slike">
+                }
+            </div>
+        </div>
+
+        <div class="col-md-7 d-flex flex-column">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="cat-pill">@Model.Kategorija</span>
+                @if (Model.Lager > 0)
+                {
+                    <span class="stock-ok">● Na skladištu (@Model.Lager kom)</span>
+                }
+                else
+                {
+                    <span class="stock-none">● Rasprodano</span>
+                }
+            </div>
+
+            <h1 class="fw-bold mb-3" style="font-size:2rem; letter-spacing:-0.5px; color:#0f172a;">@Model.Naziv</h1>
+
+            <div class="detail-price mb-4">@Model.Cijena.ToString("F2") €</div>
+
+            <hr style="border-color:#f1f5f9; margin: 0 0 1.5rem;">
+
+            <div class="mb-4">
+                <div class="section-label">Opis i specifikacije</div>
+                <p class="desc-text">@Model.Opis</p>
+            </div>
+
+            <div class="mt-auto">
+                @if (uloga == "Admin")
+                {
+                    <div class="admin-panel">
+                        <div class="section-label mb-3">Administratorske opcije</div>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@Model.ProizvodID"
+                               class="btn btn-secondary rounded-3 px-4 fw-semibold">Uredi podatke</a>
+                            <form asp-action="Delete" asp-route-id="@Model.ProizvodID" method="post"
+                                  onsubmit="return confirm('Sigurno želiš ukloniti ovaj proizvod?');" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger rounded-3 px-4 fw-semibold">Obriši artikl</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        <div class="col-sm-8">
+                            <form asp-controller="Kosarica" asp-action="Dodaj" asp-route-id="@Model.ProizvodID"
+                                  method="post" class="m-0 kosarica-form" data-product-id="@Model.ProizvodID">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold py-3"
+                                        @(Model.Lager == 0 ? "disabled" : "")>
+                                    🛒 Dodaj u košaricu
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-sm-4">
+                            <form asp-controller="Wishlist" asp-action="DodajUlistu" asp-route-id="@Model.ProizvodID" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger btn-lg w-100 rounded-3 fw-semibold py-3">
+                                    ♡ Sačuvaj
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

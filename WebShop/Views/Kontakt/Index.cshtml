@@ -1,0 +1,117 @@
+@{
+    ViewData["Title"] = "Kontakt";
+}
+
+<style>
+    .kontakt-wrap { max-width: 1000px; margin: 0 auto; }
+    .info-card {
+        background: #0f172a;
+        border-radius: 20px;
+        padding: 2.5rem;
+        color: #fff;
+        height: 100%;
+    }
+    .info-card h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.3px; }
+    .info-card p  { color: rgba(255,255,255,0.55); font-size: 0.9rem; margin-bottom: 2rem; }
+    .info-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+    .info-icon {
+        width: 44px; height: 44px;
+        background: rgba(59,130,246,0.2);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    .info-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.4); margin-bottom: 2px; }
+    .info-value { font-size: 0.95rem; color: rgba(255,255,255,0.85); font-weight: 500; }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 2.5rem;
+        height: 100%;
+    }
+    .form-card h3 { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; letter-spacing: -0.3px; }
+    .form-card .sub { font-size: 0.88rem; color: #64748b; margin-bottom: 2rem; }
+    .form-label { font-size: 0.82rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem; }
+    .form-control { border-color: #e2e8f0; border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 0.92rem; }
+    .form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    textarea.form-control { resize: vertical; }
+</style>
+
+<div class="kontakt-wrap">
+    <div class="mb-4">
+        <h1 class="fw-bold mb-1" style="font-size:1.9rem; letter-spacing:-0.5px;">Kontaktirajte nas</h1>
+        <p class="text-muted" style="font-size:0.9rem;">Tu smo za sva pitanja, reklamacije i savjete oko odabira opreme.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Contact info -->
+        <div class="col-lg-4">
+            <div class="info-card shadow-sm">
+                <h2>TechGear d.o.o.</h2>
+                <p>Vaš partner za premium tech opremu</p>
+
+                <div class="info-item">
+                    <div class="info-icon">📍</div>
+                    <div>
+                        <div class="info-label">Adresa</div>
+                        <div class="info-value">Josipa Bana Jelačića 67, Čakovec</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📞</div>
+                    <div>
+                        <div class="info-label">Telefon</div>
+                        <div class="info-value">+385 1 234 5678</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">✉️</div>
+                    <div>
+                        <div class="info-label">Email</div>
+                        <div class="info-value">podrska&#64;techgear.hr</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">🕐</div>
+                    <div>
+                        <div class="info-label">Radno vrijeme</div>
+                        <div class="info-value">Pon–Pet: 9:00 – 17:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact form -->
+        <div class="col-lg-8">
+            <div class="form-card shadow-sm">
+                <h3>Pošaljite poruku</h3>
+                <p class="sub">Odgovaramo u roku od jednog radnog dana.</p>
+
+                <form asp-action="Posalji" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Ime i prezime</label>
+                            <input type="text" name="ime" class="form-control" placeholder="Ana Horvat" required />
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Email adresa</label>
+                            <input type="email" name="email" class="form-control" placeholder="ana@primjer.com" required />
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Vaša poruka</label>
+                        <textarea name="poruka" class="form-control" rows="6"
+                                  placeholder="Opišite vaš upit što detaljnije..." required maxlength="2000"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary rounded-3 px-5 py-2 fw-bold shadow-sm">
+                        Pošalji poruku →
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

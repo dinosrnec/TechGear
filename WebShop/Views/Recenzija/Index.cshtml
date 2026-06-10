@@ -1,0 +1,178 @@
+@model IEnumerable<WebShop.Models.Recenzija>
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Recenzije";
+    string? uloga = Context.Session.GetString("KorisnikUloga");
+    string? korisnikIme = Context.Session.GetString("KorisnikIme");
+    double prosjek = ViewBag.Prosjek ?? 0.0;
+    int ukupno = ViewBag.Ukupno ?? 0;
+}
+
+<style>
+    .stars-display { color: #f59e0b; font-size: 1.1rem; letter-spacing: 1px; }
+    .stars-display-sm { color: #f59e0b; font-size: 0.95rem; }
+    .review-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: box-shadow 0.2s;
+    }
+    .review-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .reviewer-name { font-weight: 700; color: #0f172a; }
+    .review-date   { font-size: 0.8rem; color: #94a3b8; }
+    .review-text   { color: #475569; line-height: 1.7; font-size: 0.95rem; }
+
+    .rating-bar { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem; margin-bottom: 2.5rem; }
+    .avg-score { font-size: 3.5rem; font-weight: 900; color: #0f172a; line-height: 1; }
+    .avg-stars  { font-size: 1.8rem; color: #f59e0b; }
+
+    /* Star picker */
+    .star-picker { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+    .star-picker input { display: none; }
+    .star-picker label {
+        font-size: 2rem;
+        color: #d1d5db;
+        cursor: pointer;
+        transition: color 0.1s;
+        line-height: 1;
+    }
+    .star-picker input:checked ~ label,
+    .star-picker label:hover,
+    .star-picker label:hover ~ label { color: #f59e0b; }
+
+    .form-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem; }
+    .form-label { font-size: 0.82rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem; }
+    .form-control { border-color: #e2e8f0; border-radius: 10px; font-size: 0.92rem; }
+    .form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+</style>
+
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+    <div>
+        <h1 class="fw-bold mb-0" style="font-size:1.9rem; letter-spacing:-0.5px;">Recenzije kupaca</h1>
+        <p class="text-muted mb-0" style="font-size:0.9rem;">Što naši kupci kažu o TechGear iskustvu</p>
+    </div>
+</div>
+
+<!-- Aggregate score -->
+@if (ukupno > 0)
+{
+    <div class="rating-bar shadow-sm">
+        <div class="row align-items-center g-4">
+            <div class="col-auto text-center">
+                <div class="avg-score">@prosjek.ToString("F1")</div>
+                <div class="avg-stars mt-1">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        @(i <= Math.Round(prosjek) ? "★" : "☆")
+                    }
+                </div>
+                <div class="text-muted small mt-1">@ukupno @(ukupno == 1 ? "recenzija" : "recenzija")</div>
+            </div>
+            <div class="col">
+                @for (int s = 5; s >= 1; s--)
+                {
+                    int cnt = Model.Count(r => r.Ocjena == s);
+                    double pct = ukupno > 0 ? (double)cnt / ukupno * 100 : 0;
+                    <div class="d-flex align-items-center gap-2 mb-1" style="font-size:0.85rem;">
+                        <span style="width:14px; color:#f59e0b; font-weight:700;">@s</span>
+                        <span style="color:#f59e0b; font-size:0.8rem;">★</span>
+                        <div class="flex-grow-1" style="background:#f1f5f9; border-radius:4px; height:8px; overflow:hidden;">
+                            <div style="background:#f59e0b; width:@pct.ToString("F0")%; height:100%; border-radius:4px;"></div>
+                        </div>
+                        <span class="text-muted" style="width:24px; text-align:right;">@cnt</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row g-4 align-items-start">
+    <!-- Reviews list -->
+    <div class="col-lg-7">
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5" style="background:#fff; border:1px solid #e2e8f0; border-radius:16px;">
+                <div class="fs-1 mb-2 text-muted">💬</div>
+                <h5 class="fw-bold text-dark mb-1">Još nema recenzija</h5>
+                <p class="text-muted small">Budite prvi koji će podijeliti iskustvo!</p>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex flex-column gap-3">
+                @foreach (var r in Model)
+                {
+                    <div class="review-card shadow-sm">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="reviewer-name">@r.KorisnikIme</span>
+                                <div class="stars-display-sm">
+                                    @for (int i = 1; i <= 5; i++) { @(i <= r.Ocjena ? "★" : "☆") }
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="review-date">@r.DatumKreiranja.ToString("dd.MM.yyyy.")</span>
+                                @if (uloga == "Admin")
+                                {
+                                    <form asp-action="Obrisi" asp-route-id="@r.RecenzijaID" method="post" class="m-0">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-link btn-sm text-danger p-0 fw-semibold"
+                                                onclick="return confirm('Obrisati ovu recenziju?')">Obriši</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                        <p class="review-text mb-0">@r.Tekst</p>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Add review form -->
+    <div class="col-lg-5">
+        <div class="form-card shadow-sm" style="position: sticky; top: 1.5rem;">
+            <h5 class="fw-bold mb-1" style="color:#0f172a;">Napišite recenziju</h5>
+            <p class="text-muted small mb-4">Podijelite vaše iskustvo s TechGear prodavaonom</p>
+
+            @if (korisnikIme != null && uloga != "Admin")
+            {
+                <form asp-action="Dodaj" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">Vaša ocjena</label>
+                        <div class="star-picker" id="starPicker">
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <input type="radio" name="ocjena" id="star@(i)" value="@i" @(i == 5 ? "checked" : "") />
+                                <label for="star@(i)" title="@i zvjezdice">★</label>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Vaša recenzija</label>
+                        <textarea name="tekst" class="form-control" rows="5"
+                                  placeholder="Opišite vaše iskustvo — kvaliteta proizvoda, dostava, korisnička podrška..." required maxlength="1000"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-3 fw-bold py-2">Objavi recenziju</button>
+                </form>
+            }
+            else if (uloga == "Admin")
+            {
+                <div class="text-center py-3 text-muted small">
+                    <span>Administratori ne mogu pisati recenzije.</span>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-3">
+                    <p class="text-muted small mb-3">Morate biti prijavljeni kako biste ostavili recenziju.</p>
+                    <a asp-controller="Racun" asp-action="Login" class="btn btn-outline-primary rounded-3 px-4 fw-semibold">Prijavi se</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,171 @@
+@{
+    ViewData["Title"] = "O nama";
+}
+
+<style>
+    .onama-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+        border-radius: 20px;
+        padding: 4rem 3rem;
+        color: #fff;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .onama-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 50% 80% at 90% 50%, rgba(59,130,246,0.15) 0%, transparent 70%);
+    }
+    .onama-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -1px; }
+    .onama-hero p  { color: rgba(255,255,255,0.6); font-size: 1.05rem; max-width: 540px; line-height: 1.7; }
+
+    .value-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .value-card:hover { box-shadow: 0 12px 28px rgba(0,0,0,0.07); transform: translateY(-3px); }
+    .value-icon {
+        width: 56px; height: 56px;
+        border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.6rem;
+        margin-bottom: 1.2rem;
+    }
+    .value-title { font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
+    .value-text  { font-size: 0.88rem; color: #64748b; line-height: 1.65; margin: 0; }
+
+    .team-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.75rem;
+        text-align: center;
+        height: 100%;
+        transition: box-shadow 0.2s;
+    }
+    .team-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+    .team-avatar {
+        width: 72px; height: 72px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1rem;
+    }
+    .team-name   { font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+    .team-role   { font-size: 0.82rem; color: #3b82f6; font-weight: 600; margin-bottom: 0.5rem; }
+    .team-bio    { font-size: 0.83rem; color: #64748b; line-height: 1.55; }
+
+    .timeline { border-left: 2px solid #e2e8f0; padding-left: 2rem; margin-left: 1rem; }
+    .tl-item { position: relative; margin-bottom: 2rem; }
+    .tl-dot {
+        position: absolute;
+        left: -2.6rem;
+        top: 0.2rem;
+        width: 16px; height: 16px;
+        background: #3b82f6;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 2px #3b82f6;
+    }
+    .tl-year { font-size: 0.78rem; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+    .tl-title { font-weight: 700; color: #0f172a; margin-bottom: 0.25rem; }
+    .tl-text  { font-size: 0.88rem; color: #64748b; }
+
+    .section-eyebrow { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #3b82f6; margin-bottom: 0.5rem; }
+    .section-title   { font-size: 1.6rem; font-weight: 800; color: #0f172a; letter-spacing: -0.3px; margin-bottom: 0.5rem; }
+    .section-sub     { color: #64748b; font-size: 0.9rem; }
+</style>
+
+<!-- Hero -->
+<div class="onama-hero shadow-sm">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <div style="display:inline-block; background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.4); color:#93c5fd; border-radius:20px; padding:3px 14px; font-size:0.78rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:1rem;">
+                Naša priča
+            </div>
+            <h1 class="mb-3">Strast prema tehnologiji<br>od 2018. do danas</h1>
+            <p>TechGear je osnovan s jednom misijom — dovesti vrhunski hardver što bliže onima koji ga trebaju. Od malog ureda u Zagrebu do jedne od vodećih online tech trgovina u regiji.</p>
+        </div>
+        <div class="col-lg-4 text-center d-none d-lg-block" style="font-size:8rem; opacity:0.1; user-select:none;">⚡</div>
+    </div>
+</div>
+
+<!-- Values -->
+<div class="mb-5">
+    <div class="text-center mb-4">
+        <div class="section-eyebrow">Što nas pokreće</div>
+        <h2 class="section-title">Naše vrijednosti</h2>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="value-card">
+                <div class="value-icon" style="background:#eff6ff;">🎯</div>
+                <div class="value-title">Kvaliteta iznad svega</div>
+                <p class="value-text">Svaki proizvod u našem katalogu prolazi ručnu provjeru. Surađujemo isključivo s provjerenim distributerima i brandovima.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="value-card">
+                <div class="value-icon" style="background:#f0fdf4;">🤝</div>
+                <div class="value-title">Povjerenje kupaca</div>
+                <p class="value-text">Više od 10 000 zadovoljnih kupaca govori samo za sebe. Transparentne cijene, jasna politika povrata i podrška na svakom koraku.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="value-card">
+                <div class="value-icon" style="background:#fefce8;">⚡</div>
+                <div class="value-title">Brzina i pouzdanost</div>
+                <p class="value-text">Narudžba do 14h — isporuka sutradan. Robustna logistika i vlastiti skladišni sustav jamče da vaša oprema stigne na vrijeme.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-5">
+    <div class="mb-4">
+        <div class="section-eyebrow">Ljudi iza branda</div>
+        <h2 class="section-title">Naš tim</h2>
+        <p class="section-sub">Entuzijasti koji žive tehnologiju svaki dan.</p>
+    </div>
+    <div class="row g-3">
+        <div class="col-sm-6 col-lg-3">
+            <div class="team-card shadow-sm">
+                <div class="team-avatar" style="background:#eff6ff;">👨‍💼</div>
+                <div class="team-name">Dino Srnec</div>
+                <div class="team-role">Osnivač & CEO</div>
+                <p class="team-bio">15+ godina u IT industriji. Vjeruje da svaki gamer i kreativac zaslužuje vrhunski setup bez kompromisa.</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="team-card shadow-sm">
+                <div class="team-avatar" style="background:#f0fdf4;">👩‍💻</div>
+                <div class="team-name">Ivana Perić</div>
+                <div class="team-role">Voditeljica prodaje</div>
+                <p class="team-bio">Stručnjakinja za hardware kompatibilnost. Uvijek tu kad trebate savjet koji monitor odabrati ili koje komponente spariti.</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="team-card shadow-sm">
+                <div class="team-avatar" style="background:#fefce8;">🛠️</div>
+                <div class="team-name">Tomislav Kovač</div>
+                <div class="team-role">Tehnička podrška</div>
+                <p class="team-bio">Certificirani tehničar s iskustvom u izgradnji desktop računala. Rješava svaki problem — brzo i temeljito.</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="team-card shadow-sm">
+                <div class="team-avatar" style="background:#fdf4ff;">📦</div>
+                <div class="team-name">Maja Blažević</div>
+                <div class="team-role">Logistika & Dostava</div>
+                <p class="team-bio">Osigurava da svaki paket stigne netaknut i na vrijeme. Opsjednuta savršenim pakiranjem i brzinom isporuke.</p>
+            </div>
+        </div>
+    </div>
+</div>
+

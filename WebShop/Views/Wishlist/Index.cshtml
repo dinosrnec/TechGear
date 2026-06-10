@@ -1,0 +1,95 @@
+@model IEnumerable<WebShop.Models.Proizvod>
+
+@{
+    ViewData["Title"] = "Lista želja";
+}
+
+<style>
+    .wish-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        height: 100%;
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .wish-card:hover {
+        box-shadow: 0 12px 28px rgba(0,0,0,0.07);
+        transform: translateY(-3px);
+    }
+    .wish-img {
+        background: #f8fafc;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .wish-img img { width: 100%; height: 100%; object-fit: cover; }
+    .wish-body { padding: 1.2rem; display: flex; flex-direction: column; }
+    .wish-cat  { background: #eff6ff; color: #3b82f6; border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; display: inline-block; margin-bottom: 0.5rem; }
+    .wish-name { font-weight: 700; color: #0f172a; font-size: 0.97rem; margin-bottom: 0.3rem; }
+    .wish-price { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; }
+    .empty-state { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 4rem 2rem; text-align: center; max-width: 480px; margin: 3rem auto; }
+</style>
+
+<div class="d-flex align-items-center gap-3 mb-1">
+    <h2 class="fw-bold mb-0" style="letter-spacing:-0.5px;">Lista želja</h2>
+    @if (Model.Any())
+    {
+        <span class="badge bg-danger rounded-pill">@Model.Count()</span>
+    }
+</div>
+<p class="text-muted mb-4" style="font-size:0.9rem;">Spremi omiljene artikle i dodaj ih u košaricu kad poželiš.</p>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="fs-1 mb-3" style="color:#fca5a5;">♡</div>
+        <h5 class="fw-bold text-dark mb-2">Nema spremljenih artikala</h5>
+        <p class="text-muted small mb-4">Klikni "Lista želja" na kartici artikla kako bi ga dodao ovdje.</p>
+        <a asp-controller="Proizvodi" asp-action="Index" class="btn btn-outline-primary rounded-3 px-5 fw-semibold">Natrag na katalog</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-6 col-lg-4">
+                <div class="wish-card shadow-sm">
+                    <div class="wish-img">
+                        @if (!string.IsNullOrEmpty(item.SlikaUrl))
+                        {
+                            <img src="@item.SlikaUrl" alt="@item.Naziv">
+                        }
+                        else
+                        {
+                            <img src="https://placehold.co/400x180/f1f5f9/94a3b8?text=TechGear" alt="Nema slike">
+                        }
+                    </div>
+                    <div class="wish-body">
+                        <span class="wish-cat">@item.Kategorija</span>
+                        <div class="wish-name">@item.Naziv</div>
+                        <div class="wish-price">@item.Cijena.ToString("F2") €</div>
+                        <div class="d-flex flex-column gap-2 mt-auto">
+                            <form asp-controller="Kosarica" asp-action="Dodaj" asp-route-id="@item.ProizvodID"
+                                  method="post" class="m-0 kosarica-form" data-product-id="@item.ProizvodID">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary w-100 rounded-3 fw-semibold py-2">
+                                    🛒 Dodaj u košaricu
+                                </button>
+                            </form>
+                            <form asp-action="UkloniIzMape" asp-route-id="@item.ProizvodID" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-link text-danger btn-sm fw-semibold text-decoration-none p-0 w-100">
+                                    Ukloni s liste
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
