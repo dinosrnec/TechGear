@@ -127,9 +127,12 @@
                         Isprazni košaricu
                     </button>
                 </form>
-                <a asp-action="GenerirajPdf" class="btn btn-dark rounded-3 px-4 py-2 fw-semibold shadow-sm">
-                    📄 Preuzmi ponudu (PDF)
-                </a>
+<form asp-action="Kupi" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success rounded-3 px-5 py-2 fw-bold shadow-sm">
+                        ✔ Završi kupnju
+                    </button>
+                </form>
             </div>
         </div>
     }

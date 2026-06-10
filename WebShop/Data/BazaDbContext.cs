@@ -13,5 +13,7 @@ namespace WebShop.Data
         public DbSet<Korisnik> Korisnici { get; set; }
         public DbSet<WishList> WishLists { get; set; }
         public DbSet<Recenzija> Recenzije { get; set; }
+        public DbSet<Narudzba> Narudžbe { get; set; }
+        public DbSet<NarudzbaStavka> NarudzbaStavke { get; set; }
     }
 }

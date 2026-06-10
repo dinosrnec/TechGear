@@ -14,13 +14,11 @@ namespace WebShop.Controllers
             _context = context;
         }
 
-        // GET: /Racun/Registracija
         public IActionResult Registracija()
         {
             return View();
         }
 
-        // POST: /Racun/Registracija
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registracija(Korisnik korisnik)
@@ -34,13 +32,11 @@ namespace WebShop.Controllers
             return View(korisnik);
         }
 
-        // GET: /Racun/Login
         public IActionResult Login()
         {
             return View();
         }
 
-        // POST: /Racun/Login
         [HttpPost]
         public async Task<IActionResult> Login(string email, string lozinka)
         {
@@ -60,7 +56,6 @@ namespace WebShop.Controllers
             return View();
         }
 
-        // GET: /Racun/Odjava
         public IActionResult Odjava()
         {
             HttpContext.Session.Remove("KorisnikIme");

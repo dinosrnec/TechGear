@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebShop.Models
 {
-    [Table("korisnik")] // Povezuje se s tablicom 'korisnik' u XAMPP-u
+    [Table("korisnik")]
     public class Korisnik
     {
         [Key]
@@ -20,7 +20,6 @@ namespace WebShop.Models
         public string? Ime { get; set; }
         public string? Prezime { get; set; }
 
-        // Zadana uloga je 'Kupac', admina ćemo postaviti ručno u bazi ako zatreba
         public string Uloga { get; set; } = "Kupac";
     }
 }

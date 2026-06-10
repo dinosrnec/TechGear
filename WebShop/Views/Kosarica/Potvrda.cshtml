@@ -1,0 +1,80 @@
+@model WebShop.Models.Narudzba
+
+@{
+    ViewData["Title"] = "Narudžba potvrđena";
+}
+
+<style>
+    .confirm-wrap { max-width: 680px; margin: 3rem auto; }
+    .confirm-header {
+        background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+        border: 1px solid #bbf7d0;
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    .confirm-icon { font-size: 3.5rem; margin-bottom: 0.75rem; }
+    .confirm-id { font-size: 0.85rem; color: #16a34a; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    .order-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .order-table thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0.9rem 1.25rem;
+    }
+    .order-table tbody td { padding: 0.9rem 1.25rem; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.93rem; }
+    .order-table tbody tr:last-child td { border-bottom: none; }
+
+    .total-row { background: #f8fafc; font-weight: 800; font-size: 1.05rem; }
+</style>
+
+<div class="confirm-wrap">
+    <div class="confirm-header shadow-sm">
+        <div class="confirm-icon">✅</div>
+        <h2 class="fw-bold mb-1" style="color:#15803d; letter-spacing:-0.5px;">Hvala na narudžbi!</h2>
+        <p class="text-muted mb-2" style="font-size:0.93rem;">Vaša narudžba je uspješno zaprimljena i bit će obrađena u najkraćem roku.</p>
+        <div class="confirm-id">Narudžba #@Model.NarudzbaID &nbsp;·&nbsp; @Model.DatumNarudžbe.ToString("dd.MM.yyyy. HH:mm")</div>
+    </div>
+
+    <div class="order-card shadow-sm">
+        <table class="table order-table mb-0">
+            <thead>
+                <tr>
+                    <th>Artikl</th>
+                    <th class="text-end">Cijena</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stavka in Model.Stavke)
+                {
+                    <tr>
+                        <td>@stavka.Naziv</td>
+                        <td class="text-end fw-semibold">@stavka.Cijena.ToString("F2") €</td>
+                    </tr>
+                }
+                <tr class="total-row">
+                    <td>Ukupno plaćeno</td>
+                    <td class="text-end" style="color:#15803d;">@Model.UkupnaCijena.ToString("F2") €</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a asp-controller="Proizvodi" asp-action="Index" class="btn btn-primary rounded-3 px-5 py-2 fw-semibold shadow-sm">
+            Nastavi kupovinu →
+        </a>
+    </div>
+</div>

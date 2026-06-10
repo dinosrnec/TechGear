@@ -7,7 +7,7 @@ namespace WebShop.Models
     public class Proizvod
     {
         [Key]
-        [Column("proizvodID")] // Povezuje C# sa XAMPP stupcem 'proizvodID'
+        [Column("proizvodID")]
         public int ProizvodID { get; set; }
 
         [Required]
@@ -32,7 +32,7 @@ namespace WebShop.Models
         public string? SlikaUrl { get; set; }
 
         [Required]
-        [Column("Lager")] // Prati točan naziv stupca koji smo dodali na kraj
+        [Column("Lager")]
         public int Lager { get; set; }
     }
 }

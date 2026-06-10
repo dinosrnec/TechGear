@@ -14,7 +14,6 @@ namespace WebShop.Controllers
             _context = context;
         }
 
-        // GET: /Recenzija
         public async Task<IActionResult> Index()
         {
             var recenzije = await _context.Recenzije
@@ -28,7 +27,6 @@ namespace WebShop.Controllers
             return View(recenzije);
         }
 
-        // POST: /Recenzija/Dodaj
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Dodaj(string tekst, int ocjena)
@@ -61,7 +59,6 @@ namespace WebShop.Controllers
             return RedirectToAction("Index");
         }
 
-        // POST: /Recenzija/Obrisi/5  (admin only)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Obrisi(int id)

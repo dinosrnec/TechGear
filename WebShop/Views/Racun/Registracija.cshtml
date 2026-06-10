@@ -34,7 +34,6 @@
     .auth-footer a { color: #3b82f6; font-weight: 600; text-decoration: none; }
     .auth-footer a:hover { text-decoration: underline; }
 
-    /* Validation popup */
     #val-popup {
         position: fixed;
         top: 1.5rem;
@@ -59,13 +58,11 @@
     #val-popup .popup-title { font-weight: 700; color: #b91c1c; font-size: 0.92rem; margin-bottom: 0.35rem; }
     #val-popup ul { margin: 0; padding-left: 1.1rem; color: #374151; font-size: 0.86rem; line-height: 1.7; }
 
-    /* Password strength bar */
     .strength-bar-wrap { height: 4px; background: #f1f5f9; border-radius: 4px; margin-top: 6px; overflow: hidden; }
     .strength-bar      { height: 100%; border-radius: 4px; transition: width 0.3s, background 0.3s; width: 0; }
     .strength-label    { font-size: 0.75rem; margin-top: 3px; font-weight: 600; }
 </style>
 
-<!-- Validation popup -->
 <div id="val-popup">
     <div class="popup-title">⚠️ Ispravite sljedeće:</div>
     <ul id="val-list"></ul>
@@ -127,7 +124,6 @@
 
 <script>
 (function () {
-    // ── Password show/hide ──
     const toggleLoz = document.getElementById('toggleLoz');
     const fLozinka  = document.getElementById('fLozinka');
     const eyeLoz    = document.getElementById('eyeLoz');
@@ -137,7 +133,6 @@
         eyeLoz.textContent = vis ? '👁' : '🙈';
     });
 
-    // ── Password strength ──
     const strengthBar   = document.getElementById('strengthBar');
     const strengthLabel = document.getElementById('strengthLabel');
     fLozinka.addEventListener('input', function () {
@@ -167,7 +162,6 @@
         }
     });
 
-    // ── Validation helpers ──
     function showError(inputId, errId, show) {
         const input = document.getElementById(inputId);
         const err   = document.getElementById(errId);
@@ -184,13 +178,11 @@
         return /^[^\s@@]+@@[^\s@@]+\.[^\s@@]{2,}$/.test(email);
     }
 
-    // Clear errors on input
     document.getElementById('fEmail').addEventListener('input',   function () { showError('fEmail',   'err-email',   false); });
     document.getElementById('fLozinka').addEventListener('input', function () { showError('fLozinka', 'err-lozinka', false); });
     document.getElementById('fIme').addEventListener('input',     function () { showError('fIme',     'err-ime',     false); });
     document.getElementById('fPrezime').addEventListener('input', function () { showError('fPrezime', 'err-prezime', false); });
 
-    // ── Form submit ──
     document.getElementById('regForm').addEventListener('submit', function (e) {
         const email   = document.getElementById('fEmail').value.trim();
         const lozinka = document.getElementById('fLozinka').value;
@@ -223,14 +215,11 @@
 
         if (errors.length > 0) {
             e.preventDefault();
-            // Show popup
             const list = document.getElementById('val-list');
             list.innerHTML = errors.map(err => '<li>' + err + '</li>').join('');
             const popup = document.getElementById('val-popup');
             popup.style.display = 'block';
-            // Focus first invalid field
             if (first) document.getElementById(first).focus();
-            // Auto-hide after 5s
             clearTimeout(popup._timer);
             popup._timer = setTimeout(() => { popup.style.display = 'none'; }, 5000);
         }

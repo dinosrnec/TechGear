@@ -1,0 +1,95 @@
+@model IEnumerable<WebShop.Models.Narudzba>
+
+@{
+    ViewData["Title"] = "Povijest narudžbi";
+}
+
+<style>
+    .hist-wrap { max-width: 860px; margin: 0 auto; }
+    .order-block {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .order-head {
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .order-id { font-weight: 800; color: #0f172a; font-size: 0.95rem; }
+    .order-date { font-size: 0.83rem; color: #64748b; }
+    .order-total { font-size: 1.1rem; font-weight: 800; color: #15803d; }
+
+    .order-table { margin: 0; }
+    .order-table td { padding: 0.75rem 1.5rem; font-size: 0.9rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .order-table tr:last-child td { border-bottom: none; }
+
+    .empty-state {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        text-align: center;
+        max-width: 480px;
+        margin: 3rem auto;
+    }
+</style>
+
+<div class="hist-wrap">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <h2 class="fw-bold mb-0" style="letter-spacing:-0.5px;">Povijest narudžbi</h2>
+        @if (Model.Any())
+        {
+            <span class="badge bg-primary rounded-pill">@Model.Count()</span>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="fs-1 mb-3 text-muted">📋</div>
+            <h5 class="fw-bold text-dark mb-2">Nema narudžbi</h5>
+            <p class="text-muted small mb-4">Još niste obavili nijednu kupnju.</p>
+            <a asp-controller="Proizvodi" asp-action="Index" class="btn btn-primary rounded-3 px-5 py-2 fw-semibold">Istraži katalog</a>
+        </div>
+    }
+    else
+    {
+        foreach (var narudzba in Model)
+        {
+            <div class="order-block shadow-sm">
+                <div class="order-head">
+                    <div>
+                        <span class="order-id">Narudžba #@narudzba.NarudzbaID</span>
+                        <span class="order-date ms-3">@narudzba.DatumNarudžbe.ToString("dd.MM.yyyy. HH:mm")</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="order-total">@narudzba.UkupnaCijena.ToString("F2") €</span>
+                        <a asp-action="GenerirajPdfNarudzbe" asp-route-id="@narudzba.NarudzbaID"
+                           class="btn btn-sm btn-outline-dark rounded-3 fw-semibold px-3">
+                            📄 PDF
+                        </a>
+                    </div>
+                </div>
+                <table class="table order-table mb-0">
+                    <tbody>
+                        @foreach (var stavka in narudzba.Stavke)
+                        {
+                            <tr>
+                                <td class="fw-semibold text-dark">@stavka.Naziv</td>
+                                <td class="text-end fw-semibold">@stavka.Cijena.ToString("F2") €</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+</div>

@@ -15,7 +15,6 @@ namespace WebShop.Controllers
             _context = context;
         }
 
-        // GET: /Wishlist/BrojStavki
         [HttpGet]
         public IActionResult BrojStavki()
         {
@@ -25,7 +24,6 @@ namespace WebShop.Controllers
             return Json(new { count });
         }
 
-        // GET: /Wishlist/MojeId  — returns array of product IDs on this user's wishlist
         [HttpGet]
         public IActionResult MojeId()
         {

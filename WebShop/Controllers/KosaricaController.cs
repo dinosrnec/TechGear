@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebShop.Data;
 using WebShop.Models;
 using System.IO;
@@ -22,32 +23,27 @@ namespace WebShop.Controllers
         private void SaveKosarica(List<Proizvod> kosarica)
             => HttpContext.Session.SetObjectAsJson("Kosarica", kosarica);
 
-        // GET: /Kosarica/BrojStavki
         [HttpGet]
         public IActionResult BrojStavki()
         {
             return Json(new { count = GetKosarica().Count });
         }
 
-        // GET: /Kosarica/Index
         public IActionResult Index()
         {
             return View(GetKosarica());
         }
 
-        // POST: /Kosarica/Dodaj/id
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Dodaj(int id)
         {
-            // 1. ZAŠTITA OD ADMINA: Administrator ne smije kupovati
             if (HttpContext.Session.GetString("KorisnikUloga") == "Admin")
             {
                 TempData["Greska"] = "Kao administrator nemate ovlasti za dodavanje artikala u košaricu.";
                 return RedirectToAction("Index", "Proizvodi");
             }
 
-            // 2. ZAŠTITA OD GOSTA (UBACI_TRECI_KORAK): Ako korisnik nije ulogiran, pošalji ga na login
             if (HttpContext.Session.GetString("KorisnikIme") == null)
             {
                 TempData["Greska"] = "Morate se prijaviti na svoj račun kako biste dodavali artikle u košaricu.";
@@ -69,7 +65,71 @@ namespace WebShop.Controllers
             return RedirectToAction("Index", "Proizvodi");
         }
 
-        // POST: /Kosarica/Ocisti
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Kupi()
+        {
+            if (HttpContext.Session.GetString("KorisnikUloga") == "Admin")
+                return RedirectToAction("Index", "Proizvodi");
+
+            int? korisnikId = HttpContext.Session.GetInt32("KorisnikID");
+            if (korisnikId == null)
+            {
+                TempData["Greska"] = "Morate se prijaviti kako biste završili kupnju.";
+                return RedirectToAction("Login", "Racun");
+            }
+
+            var kosarica = GetKosarica();
+            if (!kosarica.Any())
+                return RedirectToAction("Index");
+
+            var proizvodIds = kosarica.Select(p => p.ProizvodID).Distinct().ToList();
+            var proizvodi = await _context.Proizvodi
+                .Where(p => proizvodIds.Contains(p.ProizvodID))
+                .ToListAsync();
+
+            foreach (var item in kosarica)
+            {
+                var proizvod = proizvodi.FirstOrDefault(p => p.ProizvodID == item.ProizvodID);
+                if (proizvod != null && proizvod.Lager > 0)
+                    proizvod.Lager--;
+            }
+
+            var narudzba = new Narudzba
+            {
+                KorisnikID = korisnikId.Value,
+                DatumNarudžbe = DateTime.Now,
+                UkupnaCijena = kosarica.Sum(p => p.Cijena),
+                Stavke = kosarica.Select(p => new NarudzbaStavka
+                {
+                    ProizvodID = p.ProizvodID,
+                    Naziv = p.Naziv ?? string.Empty,
+                    Cijena = p.Cijena
+                }).ToList()
+            };
+
+            _context.Narudžbe.Add(narudzba);
+            await _context.SaveChangesAsync();
+
+            HttpContext.Session.Remove("Kosarica");
+
+            return RedirectToAction("Potvrda", new { id = narudzba.NarudzbaID });
+        }
+
+        public async Task<IActionResult> Potvrda(int id)
+        {
+            int? korisnikId = HttpContext.Session.GetInt32("KorisnikID");
+            if (korisnikId == null) return RedirectToAction("Login", "Racun");
+
+            var narudzba = await _context.Narudžbe
+                .Include(n => n.Stavke)
+                .FirstOrDefaultAsync(n => n.NarudzbaID == id && n.KorisnikID == korisnikId);
+
+            if (narudzba == null) return RedirectToAction("Index");
+
+            return View(narudzba);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Ocisti()
@@ -78,7 +138,6 @@ namespace WebShop.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: /Kosarica/GenerirajPdf
         public IActionResult GenerirajPdf()
         {
             var kosarica = GetKosarica();
@@ -107,7 +166,9 @@ namespace WebShop.Controllers
             gfx.DrawString(datum, fontTekst, XBrushes.DarkGray, 50, 100);
 
             double trenutniY = 150;
-            DrawTableHeader(gfx, fontBold, trenutniY);
+            gfx.DrawString("Naziv proizvoda", fontBold, XBrushes.Black, 50, trenutniY);
+            gfx.DrawString("Kategorija", fontBold, XBrushes.Black, 300, trenutniY);
+            gfx.DrawString("Cijena", fontBold, XBrushes.Black, 480, trenutniY);
             gfx.DrawLine(XPens.Black, 50, trenutniY + 15, 550, trenutniY + 15);
             trenutniY += 35;
 
@@ -122,7 +183,9 @@ namespace WebShop.Controllers
                     visinaStranice = page.Height.Point;
                     trenutniY = 50;
 
-                    DrawTableHeader(gfx, fontBold, trenutniY);
+                    gfx.DrawString("Naziv proizvoda", fontBold, XBrushes.Black, 50, trenutniY);
+                    gfx.DrawString("Kategorija", fontBold, XBrushes.Black, 300, trenutniY);
+                    gfx.DrawString("Cijena", fontBold, XBrushes.Black, 480, trenutniY);
                     gfx.DrawLine(XPens.Black, 50, trenutniY + 15, 550, trenutniY + 15);
                     trenutniY += 35;
                 }
@@ -145,10 +208,90 @@ namespace WebShop.Controllers
             return File(stream.ToArray(), "application/pdf", "WebShop_Ponuda.pdf");
         }
 
+        public async Task<IActionResult> Povijest()
+        {
+            int? korisnikId = HttpContext.Session.GetInt32("KorisnikID");
+            if (korisnikId == null)
+            {
+                TempData["Greska"] = "Morate se prijaviti kako biste vidjeli povijest narudžbi.";
+                return RedirectToAction("Login", "Racun");
+            }
+
+            var narudžbe = await _context.Narudžbe
+                .Where(n => n.KorisnikID == korisnikId)
+                .Include(n => n.Stavke)
+                .OrderByDescending(n => n.DatumNarudžbe)
+                .ToListAsync();
+
+            return View(narudžbe);
+        }
+
+        public async Task<IActionResult> GenerirajPdfNarudzbe(int id)
+        {
+            int? korisnikId = HttpContext.Session.GetInt32("KorisnikID");
+            if (korisnikId == null) return RedirectToAction("Login", "Racun");
+
+            var narudzba = await _context.Narudžbe
+                .Include(n => n.Stavke)
+                .FirstOrDefaultAsync(n => n.NarudzbaID == id && n.KorisnikID == korisnikId);
+
+            if (narudzba == null) return RedirectToAction("Povijest");
+
+            using var document = new PdfDocument();
+            document.Info.Title = $"Narudžba #{narudzba.NarudzbaID}";
+
+            XFont fontNaslov = new XFont("Helvetica", 20);
+            XFont fontTekst  = new XFont("Helvetica", 12);
+            XFont fontBold   = new XFont("Helvetica#bold", 12);
+
+            PdfPage page = document.AddPage();
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            double sirinaStranice  = page.Width.Point;
+            double visinaStranice  = page.Height.Point;
+            const double donjaMargina = 80;
+
+            gfx.DrawString("TECHGEAR - RAČUN", fontNaslov, XBrushes.Black,
+                new XRect(0, 40, sirinaStranice, 40), XStringFormats.TopCenter);
+
+            gfx.DrawString($"Narudžba #{narudzba.NarudzbaID}", fontBold, XBrushes.Black, 50, 95);
+            gfx.DrawString($"Datum: {narudzba.DatumNarudžbe:dd.MM.yyyy. HH:mm}", fontTekst, XBrushes.DarkGray, 50, 115);
+
+            double trenutniY = 160;
+            DrawTableHeader(gfx, fontBold, trenutniY);
+            gfx.DrawLine(XPens.Black, 50, trenutniY + 15, 550, trenutniY + 15);
+            trenutniY += 35;
+
+            foreach (var stavka in narudzba.Stavke)
+            {
+                if (trenutniY > visinaStranice - donjaMargina)
+                {
+                    page = document.AddPage();
+                    gfx  = XGraphics.FromPdfPage(page);
+                    visinaStranice = page.Height.Point;
+                    trenutniY = 50;
+                    DrawTableHeader(gfx, fontBold, trenutniY);
+                    gfx.DrawLine(XPens.Black, 50, trenutniY + 15, 550, trenutniY + 15);
+                    trenutniY += 35;
+                }
+
+                gfx.DrawString(stavka.Naziv, fontTekst, XBrushes.Black, 50, trenutniY);
+                gfx.DrawString($"{stavka.Cijena:F2} EUR", fontTekst, XBrushes.Black, 480, trenutniY);
+                trenutniY += 25;
+            }
+
+            gfx.DrawLine(XPens.Gray, 50, trenutniY, 550, trenutniY);
+            trenutniY += 20;
+            gfx.DrawString($"Ukupno: {narudzba.UkupnaCijena:F2} EUR", fontBold, XBrushes.Black, 380, trenutniY);
+
+            using var stream = new MemoryStream();
+            document.Save(stream, false);
+
+            return File(stream.ToArray(), "application/pdf", $"TechGear_Narudzba_{narudzba.NarudzbaID}.pdf");
+        }
+
         private static void DrawTableHeader(XGraphics gfx, XFont fontBold, double y)
         {
             gfx.DrawString("Naziv proizvoda", fontBold, XBrushes.Black, 50, y);
-            gfx.DrawString("Kategorija", fontBold, XBrushes.Black, 300, y);
             gfx.DrawString("Cijena", fontBold, XBrushes.Black, 480, y);
         }
     }

@@ -14,7 +14,6 @@ namespace WebShop.Controllers
             _context = context;
         }
 
-        // GET: /Proizvodi
         public async Task<IActionResult> Index(string searchString, string sortOrder, string kategorija)
         {
             ViewData["TrenutnaPretraga"] = searchString;
@@ -23,19 +22,16 @@ namespace WebShop.Controllers
 
             var proizvodi = from p in _context.Proizvodi select p;
 
-            // 1. FILTRIRANJE: Pretraga po nazivu
             if (!string.IsNullOrEmpty(searchString))
             {
                 proizvodi = proizvodi.Where(s => s.Naziv!.Contains(searchString));
             }
 
-            // 2. FILTRIRANJE: Dropdown izbornik za kategorije
             if (!string.IsNullOrEmpty(kategorija))
             {
                 proizvodi = proizvodi.Where(s => s.Kategorija == kategorija);
             }
 
-            // 3. SORTIRANJE: Poredak po cijeni
             switch (sortOrder)
             {
                 case "cijena_asc":
@@ -57,7 +53,6 @@ namespace WebShop.Controllers
             return View(await proizvodi.ToListAsync());
         }
 
-        // GET: /Proizvodi/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -68,7 +63,6 @@ namespace WebShop.Controllers
             return View(proizvod);
         }
 
-        // GET: /Proizvodi/Create
         public IActionResult Create()
         {
             if (HttpContext.Session.GetString("KorisnikUloga") != "Admin")
@@ -78,7 +72,6 @@ namespace WebShop.Controllers
             return View();
         }
 
-        // POST: /Proizvodi/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Proizvod proizvod)
@@ -97,7 +90,6 @@ namespace WebShop.Controllers
             return View(proizvod);
         }
 
-        // GET: /Proizvodi/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (HttpContext.Session.GetString("KorisnikUloga") != "Admin")
@@ -113,7 +105,6 @@ namespace WebShop.Controllers
             return View(proizvod);
         }
 
-        // POST: /Proizvodi/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Proizvod proizvod)
@@ -142,7 +133,6 @@ namespace WebShop.Controllers
             return View(proizvod);
         }
 
-        // POST: /Proizvodi/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
